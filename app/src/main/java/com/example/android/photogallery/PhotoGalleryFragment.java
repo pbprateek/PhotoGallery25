@@ -34,7 +34,9 @@ public class PhotoGalleryFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        Log.d("TEST","beforefetch");
         new FetchItemTask().execute();
+        Log.d("TEST","afterfetch");
     }
 
     @Nullable
@@ -43,15 +45,26 @@ public class PhotoGalleryFragment extends Fragment {
         View v=inflater.inflate(R.layout.fragment_photo_gallery,container,false);
         mPhotoRecyclerView=(RecyclerView) v.findViewById(R.id.photo_recycler_view);
         mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(),3));
-        setupAdapter();
+        Log.d("TEST","beforeadap");
+        //Dummy fill
+        for(int i=0;i<10;i++){
+            GalleryItem ite=new GalleryItem();
+            ite.setCaption("DEMO"+i);
+            mItems.add(ite);
+        }
 
+        //Dummy fill
+        setupAdapter();
+        Log.d("TEST","afteradap");
         return v;
     }
     private void setupAdapter(){
         //iaAdded to check whether fragment has been attached to activity or not
         //we call this bcz we are using asynctask which is a background thread and fragment can deattach
         //while processing n backgrond so we check,normally its not required
+        Log.d("TEST","beforeisadd");
         if(isAdded()){
+            Log.d("TEST","afterisadd");
             mPhotoRecyclerView.setAdapter(new PhotoAdapter(mItems));
         }
     }
@@ -95,6 +108,7 @@ public class PhotoGalleryFragment extends Fragment {
 
         @Override
         protected List<GalleryItem> doInBackground(Void... params) {
+            Log.d("TEST","indoin");
            /* try {
                 String result=new FlickrFetchr().getUrlString("https://www.bignerdranch.com");
                 Log.i(TAG,"Fetched content of url"+result);
@@ -104,10 +118,11 @@ public class PhotoGalleryFragment extends Fragment {
             */
            return new FlickrFetchr().fetchItems();
         }
-
+        //this automatically  runs once doinBackground is done,all gui changes should be handled here
         @Override
         protected void onPostExecute(List<GalleryItem> galleryItems) {
             mItems=galleryItems;
+            Log.d("TEST","inonpost");
             setupAdapter();
         }
     }
